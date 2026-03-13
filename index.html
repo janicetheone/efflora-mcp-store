@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efflora MCP Store</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #FF4757;
+  --primary-light: #FF6B7A;
+  --primary-bg: #FFF0F1;
+  --bg: #F5F5F5;
+  --white: #FFFFFF;
+  --text-primary: #1A1A1A;
+  --text-secondary: #555555;
+  --text-tertiary: #999999;
+  --border: #EBEBEB;
+  --tag-bg: #F5F5F5;
+  --success: #00C853;
+  --warning: #FF9800;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Helvetica Neue", sans-serif;
+  background: var(--bg); color: var(--text-primary); min-height: 100vh;
+}
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; border: none; font-family: inherit; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* NAV */
+.top-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 40px; display: flex; align-items: center; height: 64px;
+}
+.nav-logo { font-size: 20px; font-weight: 800; color: var(--primary); margin-right: 40px; display: flex; align-items: center; gap: 8px; }
+.nav-logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
+.nav-tabs { display: flex; gap: 32px; flex: 1; }
+.nav-tab {
+  font-size: 15px; color: var(--text-tertiary); cursor: pointer;
+  position: relative; padding: 20px 0; font-weight: 500; transition: color 0.2s;
+}
+.nav-tab:hover { color: var(--text-secondary); }
+.nav-tab.active { color: var(--text-primary); font-weight: 600; }
+.nav-tab.active::after {
+  content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 24px; height: 3px; background: var(--primary); border-radius: 2px;
+}
+.nav-search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--tag-bg); border-radius: 20px;
+  padding: 8px 16px; width: 280px; margin-left: auto;
+  transition: width 0.3s, box-shadow 0.3s;
+}
+.nav-search:focus-within { width: 360px; box-shadow: 0 0 0 2px rgba(255,71,87,0.2); background: var(--white); border: 1px solid var(--border); }
+.nav-search svg { width: 16px; height: 16px; flex-shrink: 0; }
+.nav-search input { border: none; background: none; outline: none; flex: 1; font-size: 14px; }
+.nav-search input::placeholder { color: var(--text-tertiary); }
+.nav-actions { display: flex; align-items: center; gap: 16px; margin-left: 24px; }
+.nav-btn { padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+.nav-btn-create { background: var(--primary); color: white; }
+.nav-btn-create:hover { background: var(--primary-light); }
+.nav-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+
+/* CATEGORY BAR */
+.category-bar { background: var(--white); padding: 12px 40px; border-bottom: 1px solid var(--border); display: flex; gap: 8px; overflow-x: auto; }
+.cat-pill {
+  flex-shrink: 0; padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 500;
+  background: var(--tag-bg); color: var(--text-secondary); cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.cat-pill:hover { background: #ECECEC; }
+.cat-pill.active { background: var(--primary); color: white; }
+
+/* FEED */
+.feed-container { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
+.waterfall { column-count: 5; column-gap: 16px; }
+@media (max-width: 1400px) { .waterfall { column-count: 4; } }
+@media (max-width: 1100px) { .waterfall { column-count: 3; } }
+@media (max-width: 800px) { .waterfall { column-count: 2; } }
+
+/* CARD */
+.mcp-card {
+  break-inside: avoid; margin-bottom: 16px;
+  background: var(--white); border-radius: var(--radius-md);
+  overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.3s;
+}
+.mcp-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+/* Image cover */
+.card-cover {
+  width: 100%; position: relative; overflow: hidden;
+}
+.card-cover img {
+  width: 100%; display: block; object-fit: cover;
+}
+.card-cover-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 40px 16px 14px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  color: white;
+}
+.card-cover-overlay .cover-title {
+  font-size: 16px; font-weight: 700; line-height: 1.4;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.cover-badge {
+  position: absolute; top: 10px; left: 10px;
+  font-size: 11px; font-weight: 600; padding: 4px 10px;
+  border-radius: 6px; z-index: 3;
+}
+.badge-hot { background: var(--primary); color: white; }
+.badge-new { background: #7C4DFF; color: white; }
+.badge-top { background: #FF9800; color: white; }
+.badge-free { background: var(--success); color: white; }
+.cover-price {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 13px; font-weight: 700; color: white;
+  background: rgba(0,0,0,0.45); padding: 4px 12px;
+  border-radius: 8px; z-index: 3; backdrop-filter: blur(4px);
+}
+
+/* Text-only cover (minority) */
+.card-cover-text-only {
+  width: 100%; position: relative; overflow: hidden;
+  padding: 28px 20px; min-height: 160px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.cover-text-main {
+  font-size: 20px; font-weight: 800; line-height: 1.5; color: #1A1A1A;
+}
+.cover-text-main .hl { color: var(--primary); }
+.cover-text-main .hl-green { color: #00C853; }
+.cover-text-main .hl-blue { color: #1565C0; }
+.cover-text-sub { font-size: 12px; color: var(--text-secondary); margin-top: 8px; line-height: 1.5; }
+.cover-grid-bg {
+  background: #F0FFF0;
+  background-image: linear-gradient(rgba(0,200,83,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,83,0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.cover-cool-bg {
+  background: #F0F4FF;
+  background-image: linear-gradient(135deg, rgba(21,101,192,0.04) 0%, rgba(124,77,255,0.04) 100%);
+}
+
+/* Card body */
+.card-body { padding: 12px 14px 14px; }
+.card-title {
+  font-size: 14px; font-weight: 600; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 8px;
+}
+.card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+.tag-scene { background: #E8F5E9; color: #2E7D32; }
+.tag-auto { background: #E3F2FD; color: #1565C0; }
+.tag-cat { background: var(--primary-bg); color: var(--primary); }
+.tag-sub { background: #F3E5F5; color: #7B1FA2; }
+.card-footer { display: flex; align-items: center; justify-content: space-between; }
+.card-author { display: flex; align-items: center; gap: 8px; }
+.card-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: white; font-weight: 600;
+}
+.card-author-name { font-size: 12px; color: var(--text-tertiary); }
+.card-stats { font-size: 12px; color: var(--text-tertiary); }
+
+/* GRADIENTS */
+.g-fitness { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.g-food { background: linear-gradient(135deg, #FF6B6B, #ee5a24); }
+.g-health { background: linear-gradient(135deg, #667eea, #764ba2); }
+.g-travel { background: linear-gradient(135deg, #f7971e, #ffd200); }
+.g-edu { background: linear-gradient(135deg, #0083B0, #00B4DB); }
+.g-work { background: linear-gradient(135deg, #8E2DE2, #4A00E0); }
+.g-social { background: linear-gradient(135deg, #fc5c7d, #6a82fb); }
+.g-ai { background: linear-gradient(135deg, #0F2027, #2C5364); }
+.g-money { background: linear-gradient(135deg, #f12711, #f5af19); }
+.g-life { background: linear-gradient(135deg, #f093fb, #f5576c); }
+
+/* DETAIL */
+.detail-layout {
+  max-width: 1200px; margin: 0 auto; padding: 32px 40px;
+  display: grid; grid-template-columns: 1fr 400px; gap: 32px;
+}
+.detail-sidebar { position: sticky; top: 96px; align-self: start; }
+.detail-hero {
+  width: 100%; border-radius: var(--radius-lg); overflow: hidden;
+  margin-bottom: 24px; position: relative;
+}
+.detail-hero img { width: 100%; height: 360px; object-fit: cover; display: block; }
+.detail-hero-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 60px 32px 28px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: white;
+}
+.detail-hero-overlay h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+.detail-hero-overlay p { font-size: 15px; opacity: 0.9; }
+.detail-hero-badge {
+  position: absolute; top: 20px; right: 20px;
+  background: rgba(255,255,255,0.9); padding: 8px 16px;
+  border-radius: 20px; font-size: 14px; font-weight: 600; color: var(--primary);
+}
+.detail-title { font-size: 24px; font-weight: 800; line-height: 1.4; margin-bottom: 12px; }
+.detail-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 24px; }
+
+.detail-creator {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px; background: var(--white);
+  border-radius: var(--radius-md); margin-bottom: 24px;
+  box-shadow: var(--shadow-sm); cursor: pointer; transition: box-shadow 0.2s;
+}
+.detail-creator:hover { box-shadow: var(--shadow-md); }
+.creator-av {
+  width: 48px; height: 48px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: white; font-weight: 700; flex-shrink: 0;
+}
+.creator-info { flex: 1; }
+.creator-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+.creator-desc { font-size: 13px; color: var(--text-tertiary); }
+.creator-follow {
+  padding: 8px 20px; background: var(--primary); color: white;
+  border-radius: 20px; font-size: 13px; font-weight: 600;
+}
+.creator-follow:hover { background: var(--primary-light); }
+
+.detail-section { margin-bottom: 28px; }
+.section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+.cap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cap-item {
+  padding: 16px; background: var(--white); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm); transition: box-shadow 0.2s;
+}
+.cap-item:hover { box-shadow: var(--shadow-md); }
+.cap-icon { font-size: 24px; margin-bottom: 8px; }
+.cap-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.cap-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+.auth-list { display: flex; flex-direction: column; gap: 8px; }
+.auth-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; background: var(--white);
+  border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);
+}
+.auth-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.auth-dot.green { background: var(--success); }
+.auth-dot.orange { background: var(--warning); }
+.auth-dot.red { background: var(--primary); }
+.auth-text { flex: 1; font-size: 13px; color: var(--text-secondary); }
+.auth-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px; }
+.auth-badge.read { background: #E8F5E9; color: #2E7D32; }
+.auth-badge.confirm { background: #FFF3E0; color: #E65100; }
+.auth-badge.ask { background: var(--primary-bg); color: var(--primary); }
+
+.sidebar-card {
+  background: var(--white); border-radius: var(--radius-lg);
+  padding: 24px; box-shadow: var(--shadow-md); margin-bottom: 16px;
+}
+.sidebar-card-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+.price-option {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; border: 2px solid var(--border);
+  border-radius: var(--radius-sm); margin-bottom: 8px; cursor: pointer; transition: all 0.2s;
+}
+.price-option:hover { border-color: #DDD; }
+.price-option.selected { border-color: var(--primary); background: var(--primary-bg); }
+.price-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.price-desc { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+.price-val { font-size: 20px; font-weight: 800; color: var(--primary); }
+.price-val .unit { font-size: 12px; font-weight: 400; }
+.pop-tag { font-size: 10px; background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; }
+.btn-try {
+  width: 100%; padding: 14px; border-radius: var(--radius-md);
+  font-size: 15px; font-weight: 600; margin-top: 12px;
+  background: var(--white); color: var(--primary); border: 2px solid var(--primary);
+}
+.btn-try:hover { background: var(--primary-bg); }
+.btn-buy {
+  width: 100%; padding: 14px; border-radius: var(--radius-md);
+  font-size: 15px; font-weight: 600; margin-top: 8px;
+  background: linear-gradient(135deg, var(--primary), #FF6B6B);
+  color: white; box-shadow: 0 4px 16px rgba(255,71,87,0.3);
+}
+.btn-buy:hover { box-shadow: 0 6px 20px rgba(255,71,87,0.4); transform: translateY(-1px); }
+.sidebar-stats {
+  display: flex; justify-content: space-around; padding: 16px 0;
+  border-top: 1px solid var(--border); margin-top: 16px;
+}
+.sidebar-stat { text-align: center; }
+.sidebar-stat-num { font-size: 18px; font-weight: 700; }
+.sidebar-stat-label { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+
+.review-list { display: flex; flex-direction: column; gap: 12px; }
+.review-item { padding: 16px; background: var(--white); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
+.review-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.review-av {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: white; font-weight: 600;
+}
+.review-name { font-size: 14px; font-weight: 500; flex: 1; }
+.review-stars { font-size: 13px; color: #FFB300; letter-spacing: 1px; }
+.review-text { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+/* CREATOR PAGE */
+.creator-layout { max-width: 1200px; margin: 0 auto; padding: 32px 40px; }
+.creator-hero {
+  display: flex; gap: 32px; margin-bottom: 32px;
+  padding: 32px; background: var(--white);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+}
+.creator-hero-av {
+  width: 96px; height: 96px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; color: white; font-weight: 700; flex-shrink: 0;
+}
+.creator-hero-info { flex: 1; }
+.creator-hero-name { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+.creator-hero-title { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; }
+.creator-hero-bio { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+.creator-hero-stats { display: flex; gap: 32px; }
+.c-stat-num { font-size: 20px; font-weight: 700; }
+.c-stat-label { font-size: 12px; color: var(--text-tertiary); }
+.creator-hero-actions { display: flex; flex-direction: column; gap: 8px; align-self: flex-start; }
+.btn-follow-lg { padding: 10px 32px; background: var(--primary); color: white; border-radius: 20px; font-size: 14px; font-weight: 600; }
+.btn-follow-lg:hover { background: var(--primary-light); }
+
+.creator-tabs { display: flex; gap: 32px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.creator-tab {
+  font-size: 15px; color: var(--text-tertiary); cursor: pointer;
+  padding: 12px 0; position: relative; font-weight: 500;
+}
+.creator-tab.active { color: var(--text-primary); font-weight: 600; }
+.creator-tab.active::after {
+  content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 24px; height: 3px; background: var(--primary); border-radius: 2px;
+}
+.creator-mcp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.c-mcp-item {
+  display: flex; gap: 16px; padding: 20px;
+  background: var(--white); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm); cursor: pointer; transition: box-shadow 0.2s, transform 0.2s;
+}
+.c-mcp-item:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.c-mcp-thumb {
+  width: 88px; height: 88px; border-radius: var(--radius-sm);
+  object-fit: cover; flex-shrink: 0;
+}
+.c-mcp-info { flex: 1; }
+.c-mcp-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.c-mcp-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 8px; }
+.c-mcp-meta { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--text-tertiary); }
+.c-mcp-price { color: var(--primary); font-weight: 700; font-size: 15px; }
+
+/* SEARCH PAGE */
+.search-layout { max-width: 1200px; margin: 0 auto; padding: 32px 40px; }
+.search-hero { text-align: center; margin-bottom: 40px; }
+.search-hero-title { font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+.search-hero-sub { font-size: 15px; color: var(--text-secondary); }
+.search-hero-input {
+  display: flex; align-items: center; gap: 12px;
+  max-width: 600px; margin: 24px auto 0;
+  background: var(--white); border-radius: 28px;
+  padding: 14px 24px; box-shadow: var(--shadow-md);
+  border: 2px solid transparent; transition: border-color 0.3s;
+}
+.search-hero-input:focus-within { border-color: var(--primary); }
+.search-hero-input svg { width: 20px; height: 20px; flex-shrink: 0; }
+.search-hero-input input { border: none; background: none; outline: none; flex: 1; font-size: 15px; }
+.search-section { margin-bottom: 40px; }
+.search-section-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+.hot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.hot-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px; background: var(--white);
+  border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); cursor: pointer; transition: box-shadow 0.2s;
+}
+.hot-item:hover { box-shadow: var(--shadow-md); }
+.hot-rank { font-size: 20px; font-weight: 800; width: 28px; text-align: center; }
+.hot-rank.r1 { color: #FF4757; } .hot-rank.r2 { color: #FF6B6B; } .hot-rank.r3 { color: #FFA502; }
+.hot-title { font-size: 14px; font-weight: 500; }
+.hot-meta { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+.scene-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.scene-card {
+  padding: 24px 16px; background: var(--white);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
+  text-align: center; cursor: pointer; transition: all 0.2s; overflow: hidden;
+}
+.scene-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.scene-img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
+.scene-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.scene-count { font-size: 12px; color: var(--text-tertiary); }
+.creator-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+.creator-mini {
+  text-align: center; padding: 20px 12px;
+  background: var(--white); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.2s;
+}
+.creator-mini:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.creator-mini-av {
+  width: 56px; height: 56px; border-radius: 50%;
+  margin: 0 auto 10px; display: flex; align-items: center;
+  justify-content: center; font-size: 20px; color: white; font-weight: 700;
+}
+.creator-mini-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.creator-mini-tag { font-size: 11px; color: var(--text-tertiary); }
+
+/* PUBLISH PAGE */
+.publish-layout { max-width: 800px; margin: 0 auto; padding: 32px 40px; }
+.publish-hero { text-align: center; margin-bottom: 36px; }
+.publish-hero-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+.publish-hero-sub { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+
+.publish-inspire {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin-bottom: 36px;
+}
+.inspire-card {
+  padding: 16px; background: var(--white); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.2s;
+  text-align: center;
+}
+.inspire-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.inspire-card.selected { border: 2px solid var(--primary); background: var(--primary-bg); }
+.inspire-emoji { font-size: 32px; margin-bottom: 8px; }
+.inspire-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.inspire-example { font-size: 11px; color: var(--text-tertiary); line-height: 1.5; }
+
+.publish-form { background: var(--white); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-sm); }
+.form-step {
+  margin-bottom: 28px; padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.form-step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.form-step-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+}
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--primary); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; flex-shrink: 0;
+}
+.step-title { font-size: 16px; font-weight: 700; }
+.step-hint { font-size: 12px; color: var(--text-tertiary); margin-left: auto; }
+
+.form-field { margin-bottom: 16px; }
+.form-label { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; color: var(--text-secondary); }
+.form-input {
+  width: 100%; padding: 12px 16px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 14px; font-family: inherit;
+  transition: border-color 0.2s; outline: none;
+}
+.form-input:focus { border-color: var(--primary); }
+.form-textarea {
+  width: 100%; padding: 12px 16px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 14px; font-family: inherit;
+  resize: vertical; min-height: 100px; outline: none; transition: border-color 0.2s;
+}
+.form-textarea:focus { border-color: var(--primary); }
+.form-input::placeholder, .form-textarea::placeholder { color: #CCC; }
+
+.form-upload {
+  border: 2px dashed var(--border); border-radius: var(--radius-md);
+  padding: 32px; text-align: center; cursor: pointer; transition: all 0.2s;
+}
+.form-upload:hover { border-color: var(--primary); background: var(--primary-bg); }
+.upload-icon { font-size: 32px; margin-bottom: 8px; }
+.upload-text { font-size: 14px; color: var(--text-secondary); }
+.upload-hint { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
+
+.form-tags-select { display: flex; flex-wrap: wrap; gap: 8px; }
+.form-tag-option {
+  padding: 8px 16px; border-radius: 20px; font-size: 13px;
+  background: var(--tag-bg); color: var(--text-secondary);
+  cursor: pointer; transition: all 0.2s; border: 1.5px solid transparent;
+}
+.form-tag-option:hover { background: #ECECEC; }
+.form-tag-option.selected { background: var(--primary-bg); color: var(--primary); border-color: var(--primary); }
+
+.cap-add-list { display: flex; flex-direction: column; gap: 10px; }
+.cap-add-item {
+  display: flex; gap: 10px; align-items: center;
+}
+.cap-add-item input { flex: 1; }
+.cap-add-btn {
+  padding: 8px 16px; background: var(--tag-bg); border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text-secondary); cursor: pointer;
+  transition: all 0.2s; border: 1.5px dashed var(--border);
+}
+.cap-add-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+.form-price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.form-price-card {
+  padding: 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  text-align: center; cursor: pointer; transition: all 0.2s;
+}
+.form-price-card:hover { border-color: #DDD; }
+.form-price-card.selected { border-color: var(--primary); background: var(--primary-bg); }
+.form-price-type { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.form-price-desc { font-size: 11px; color: var(--text-tertiary); margin-bottom: 8px; }
+.form-price-input {
+  width: 100%; padding: 8px; border: 1px solid var(--border);
+  border-radius: 6px; text-align: center; font-size: 16px; font-weight: 700;
+  color: var(--primary); outline: none;
+}
+.form-price-input:focus { border-color: var(--primary); }
+
+.auth-config { display: flex; flex-direction: column; gap: 10px; }
+.auth-config-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; background: var(--tag-bg);
+  border-radius: var(--radius-sm);
+}
+.auth-config-text { flex: 1; font-size: 13px; }
+.auth-select {
+  padding: 6px 12px; border: 1px solid var(--border);
+  border-radius: 6px; font-size: 12px; background: var(--white);
+  outline: none; cursor: pointer;
+}
+
+.publish-actions {
+  display: flex; gap: 12px; margin-top: 24px;
+}
+.btn-draft {
+  flex: 1; padding: 14px; background: var(--white); color: var(--text-secondary);
+  border: 1.5px solid var(--border); border-radius: var(--radius-md);
+  font-size: 15px; font-weight: 600;
+}
+.btn-draft:hover { background: var(--tag-bg); }
+.btn-preview {
+  flex: 1; padding: 14px; background: var(--white); color: var(--primary);
+  border: 1.5px solid var(--primary); border-radius: var(--radius-md);
+  font-size: 15px; font-weight: 600;
+}
+.btn-preview:hover { background: var(--primary-bg); }
+.btn-submit {
+  flex: 2; padding: 14px;
+  background: linear-gradient(135deg, var(--primary), #FF6B6B);
+  color: white; border-radius: var(--radius-md);
+  font-size: 15px; font-weight: 600;
+  box-shadow: 0 4px 16px rgba(255,71,87,0.3);
+}
+.btn-submit:hover { box-shadow: 0 6px 20px rgba(255,71,87,0.4); transform: translateY(-1px); }
+
+.publish-tips {
+  margin-top: 24px; padding: 20px; background: #FFFDE7;
+  border-radius: var(--radius-md); border: 1px solid #FFF9C4;
+}
+.tips-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.tips-list { font-size: 13px; color: var(--text-secondary); line-height: 2; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.mcp-card { animation: fadeUp 0.4s ease-out both; }
+.mcp-card:nth-child(2) { animation-delay: 0.05s; }
+.mcp-card:nth-child(3) { animation-delay: 0.1s; }
+.mcp-card:nth-child(4) { animation-delay: 0.15s; }
+.mcp-card:nth-child(5) { animation-delay: 0.2s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <div class="nav-logo"><div class="nav-logo-dot"></div>Efflora</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showPage('home')">推荐</div>
+    <div class="nav-tab" onclick="showPage('search')">发现</div>
+    <div class="nav-tab">关注</div>
+    <div class="nav-tab">排行榜</div>
+  </div>
+  <div class="nav-search">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="#999" stroke-width="2" stroke-linecap="round"/></svg>
+    <input type="text" placeholder="搜索场景方案、创作者...">
+  </div>
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-create" onclick="showPage('publish')">+ 发布方案</button>
+    <div class="nav-avatar">T</div>
+  </div>
+</nav>
+
+<!-- PAGE: HOME -->
+<div id="page-home" class="page active">
+  <div class="category-bar">
+    <div class="cat-pill active">🔥 热门</div>
+    <div class="cat-pill">🍱 饮食健康</div>
+    <div class="cat-pill">🏥 医疗挂号</div>
+    <div class="cat-pill">✈️ 出行路线</div>
+    <div class="cat-pill">📚 学习教育</div>
+    <div class="cat-pill">💼 职场效率</div>
+    <div class="cat-pill">💰 省钱理财</div>
+    <div class="cat-pill">🤖 AI 工具</div>
+    <div class="cat-pill">💬 社交沟通</div>
+    <div class="cat-pill">👶 亲子育儿</div>
+  </div>
+  <div class="feed-container">
+    <div class="waterfall">
+
+      <!-- 1: 健身外卖 - IMAGE -->
+      <div class="mcp-card" onclick="showPage('detail')">
+        <div class="card-cover">
+          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&h=600&fit=crop" alt="健康饮食">
+          <span class="cover-badge badge-hot">🔥 本周最热</span>
+          <span class="cover-price">¥29</span>
+          <div class="card-cover-overlay">
+            <div class="cover-title">帮你搭配每一餐，不用算热量</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">金牌健身教练的外卖饮食方案</div>
+          <div class="card-tags"><span class="tag tag-cat">健身饮食</span><span class="tag tag-auto">可自动点餐</span></div>
+          <div class="card-footer">
+            <div class="card-author"><div class="card-avatar g-fitness">陈</div><span class="card-author-name">陈教练</span></div>
+            <div class="card-stats">❤️ 2.3k</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2: 香港美食 - IMAGE -->
+      <div class="mcp-card">
+        <div class="card-cover">
+          <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&h=500&fit=crop" alt="港式点心">
+          <span class="cover-badge badge-top">⭐ 4.9分</span>
+          <span class="cover-price">¥19</span>
+          <div class="card-cover-overlay">
+            <div class="cover-title">从早茶到宵夜，8家店不踩雷</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">香港老饕一日美食路线</div>
+          <div class="card-tags"><span class="tag tag-cat">美食</span><span class="tag tag-scene">路线规划</span></div>
+          <div class="card-footer">
+            <div class="card-author"><div class="card-avatar g-food">王</div><span class="card-author-name">王老饕</span></div>
+            <div class="card-stats">❤️ 3.1k</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3: 挂号 - IMAGE -->
+      <div class="mcp-card">
+        <div class="card-cover">
+          <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&h=700&fit=crop" alt="医院">
+          <span class="cover-price">¥39</span>
+          <div class="card-cover-overlay">
+            <div class="cover-title">号源规律 + 科室选择 + 复诊技巧</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">三甲医院挂号不踩坑指南</div>
+          <div class="card-tags"><span class="tag tag-cat">医疗</span><span class="tag tag-auto">自动预约提醒</span></div>
+          <div class="card-footer">
+            <div class="card-author"><div class="card-avatar g-health">李</div><span class="card-author-name">李护士</span></div>
+            <div class="card-stats">❤️ 1.8k</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4: 英语学习 - IMAGE -->
+      <div class="mcp-card">
+        <div class="card-cover">
+          <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&h=600&fit=crop" alt="学习">
+          <span class="cover-badge badge-new">NEW</span>
+          <span class="cover-price">¥59/月</span>
+          <div class="card-cover-overlay">
+            <div class="cover-title">每天30分钟，听说读写自动安排</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">雅思8.5老师的英语学习方案</div>
+          <div class="card-tags"><span class="tag tag-cat">英语</span><span class="tag tag-sub">月订阅</span></div>
+          <div class="card-footer">
+            <div class="card-author"><div class="card-avatar g-edu">S</div><span class="card-author-name">Sarah老师</span></div>
+            <div class="card-stats">❤️ 2.7k</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5: AI资讯 - TEXT (少数) -->
+      <div class="mcp-card">
+        <div class="card-cover-text-only" style="background:#1A1A2E; background-image: radial-gradient(circle at 20% 50%, rgba(124,77,255,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0,200,83,0.1) 0%, transparent 50%);">
+          <span class="cover-badge badge-new">NEW</span>
+          <span class="cover-price" style="background:rgba(255,255,255,0.15);color:white;">¥49/月</span>
+          <div class="cover-text-main" style="color:white;">每天5分钟<br>看完AI圈所有大事</div>
+          <div class="cover-text-sub" style="color:rgba(255,255,255,0.6);">自动抓取全平台，帮你过滤噪音</div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">AI 资讯降噪编辑</div>
+          <div class="card-tags"><span class="tag tag-cat">AI</span><span class="tag tag-auto">自动推送</span></div>
+          <div class="card-footer">
+            <div class="card-author"><div class="card-avatar g-ai">K</div><span class="card-author-name">Kevin编辑</span></div>
+            <div class="card-stats">❤️ 986</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6: 高情商 - IMAGE -->
+      <div class="mcp-card">
+        <div class="card-cover">
+          <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=500&fit=crop" alt="职场沟通">
+          <span class="cover-price">¥39/月</span>
+          <div class="card-cover-overlay">
+            <div class="cover-title">不同场景的回复策略，拿捏语气分寸</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">高情商回复助手：职场社交不翻车</div>
+          <div class="card-tags"><span class="tag tag-cat">沟通</span><span class="tag tag-auto">智能建议</span></div>
+          <div class="card-footer">
+            <div class="card-author"><div class="card-avatar g-social">林</div><span class="card-author-name">林HR</span></div>
+            <div class="card-stats">❤️ 1.4k</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7: 迪士尼 - IMAGE -->
+      <div class="mcp-card">
+        <div class="card-cover">
+          <img src="https://images.unsplash.com/photo-1597466599360-3b9775841aec?w=500&h=700&fit=crop" alt="迪士尼">
+          <span class="cover-price">¥29</span>
+          <div class="card-cover-overlay">
+            <div class="cover-title">几点冲什么项目，吃饭怎么卡点</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">迪士尼高玩一日刷园攻略</div>
+          <div class="card-tags"><span class="tag tag-cat">出行</span><span class="tag tag-scene">行程安排</span></div>
+          <div class="card-footer">
+            <div class="card-author"><div class="card-avatar g-travel">赵</div><span class="card-author-name">赵高玩</span></div>
+            <div class="card-stats">❤️ 2.1k</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8: 薅羊毛 - TEXT (少数) -->
+      <div class="mcp-card">
+        <div class="card-cover-text-only" style="background:#FFFDE7; background-image: radial-gradient(circle at 50% 50%, rgba(255,193,7,0.1) 0%, transparent 60%);">
+          <span class="cover-price">¥19</span>
+          <div class="cover-text-main"><span class="hl">航空里程</span> +<br><span style="color:#7C4DFF;">酒店积分</span><br>怎么薅最划算</div>
+          <div class="cover-text-sub">自动比价，最优兑换路径</div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">薅航空里程和酒店积分达人方法</div>
+          <div class="card-tags"><span class="tag tag-cat">省钱</span><span class="tag tag-auto">自动比价</span></div>
+          <div class="card-footer">
+            <div class="card-author"><div class="card-avatar g-money">张</div><span class="card-author-name">飞行张</span></div>
+            <div class="card-stats">❤️ 1.5k</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9: 儿童看病 - IMAGE -->
+      <div class="mcp-card">
+        <div class="card-cover">
+          <img src="https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=500&h=600&fit=crop" alt="母婴">
+          <span class="cover-badge badge-free">免费试用</span>
+          <span class="cover-price">¥29</span>
+          <div class="card-cover-overlay">
+            <div class="cover-title">挂号 / 问诊 / 用药 / 复查全流程</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">儿童看病不慌的二胎妈妈经验</div>
+          <div class="card-tags"><span class="tag tag-cat">育儿</span><span class="tag tag-scene">就医流程</span></div>
+          <div class="card-footer">
+            <div class="card-author"><div class="card-avatar g-life">周</div><span class="card-author-name">周妈妈</span></div>
+            <div class="card-stats">❤️ 1.9k</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10: 出差效率 - IMAGE -->
+      <div class="mcp-card">
+        <div class="card-cover">
+          <img src="https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=500&h=500&fit=crop" alt="商务出差">
+          <span class="cover-price">¥69/月</span>
+          <div class="card-cover-overlay">
+            <div class="cover-title">订票 / 报销 / 日程 / 拜访一条龙</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">创业者出差效率系统</div>
+          <div class="card-tags"><span class="tag tag-cat">效率</span><span class="tag tag-sub">月订阅</span></div>
+          <div class="card-footer">
+            <div class="card-author"><div class="card-avatar g-work">刘</div><span class="card-author-name">刘总</span></div>
+            <div class="card-stats">❤️ 876</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DETAIL -->
+<div id="page-detail" class="page">
+  <div class="detail-layout">
+    <div class="detail-main">
+      <div class="detail-hero">
+        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1200&h=500&fit=crop" alt="健康饮食">
+        <span class="detail-hero-badge">🔥 2,341人使用</span>
+        <div class="detail-hero-overlay">
+          <h1>金牌健身教练的外卖饮食方案</h1>
+          <p>帮你搭配每一餐，不用算热量，Agent 直接帮你选好下单</p>
+        </div>
+      </div>
+      <div class="detail-desc">
+        根据你的身体数据、健身目标和口味偏好，帮你从外卖平台选出最合适的餐食搭配。不用自己算热量，不用纠结吃什么，Agent 直接帮你选好、下单。
+      </div>
+      <div class="detail-creator" onclick="showPage('creator')">
+        <div class="creator-av g-fitness">陈</div>
+        <div class="creator-info">
+          <div class="creator-name">陈教练</div>
+          <div class="creator-desc">NSCA认证 · 8年私教经验 · 服务3000+学员</div>
+        </div>
+        <button class="creator-follow">+ 关注</button>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">✨ 这个方案能帮你做什么</div>
+        <div class="cap-grid">
+          <div class="cap-item"><div class="cap-icon">🍱</div><div class="cap-name">智能选餐</div><div class="cap-desc">根据TDEE、目标和饮食缺口，从美团/饿了么筛选最优餐食组合</div></div>
+          <div class="cap-item"><div class="cap-icon">📊</div><div class="cap-name">营养追踪</div><div class="cap-desc">自动记录每餐摄入，按周生成营养报告，偏离目标时主动提醒</div></div>
+          <div class="cap-item"><div class="cap-icon">🛒</div><div class="cap-name">一键下单</div><div class="cap-desc">直接在外卖App里帮你下单，支持设定预算上限和忌口</div></div>
+          <div class="cap-item"><div class="cap-icon">🔄</div><div class="cap-name">越用越懂你</div><div class="cap-desc">学习你的口味偏好和反馈，推荐会越来越准</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">🔐 需要的权限</div>
+        <div class="auth-list">
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">读取你的身体数据和健身目标</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">浏览外卖平台菜单和价格</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot orange"></div><div class="auth-text">在外卖App中下单</div><div class="auth-badge confirm">需确认</div></div>
+          <div class="auth-row"><div class="auth-dot red"></div><div class="auth-text">支付操作</div><div class="auth-badge ask">每次询问</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">💬 用户评价</div>
+        <div class="review-list">
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#a8edea,#fed6e3)">鱼</div><div class="review-name">小鱼干</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">用了两周瘦了3斤，关键是完全不用自己想吃什么。中午到点就收到推荐，确认一下就下单了。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#11998e,#38ef7d)">明</div><div class="review-name">跑步的阿明</div><div class="review-stars">⭐⭐⭐⭐</div></div>
+            <div class="review-text">增肌期蛋白质一直不够，用了这个之后每天蛋白质摄入稳定在体重x2g。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#667eea,#764ba2)">L</div><div class="review-name">加班汪Lisa</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">打工人福音！以前中午纠结吃啥要10分钟，现在直接看推荐确认就行。不喜欢的菜系慢慢就不推了。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">选择方案</div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">免费试用</div><div class="price-desc">体验3天，每天1次推荐</div></div><div class="price-val">¥0</div></div>
+        <div class="price-option selected" onclick="selectPrice(this)"><div><div class="price-name">场景包 <span class="pop-tag">热门</span></div><div class="price-desc">30天无限推荐 + 自动下单</div></div><div class="price-val">¥29</div></div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">持续订阅</div><div class="price-desc">长期使用，按月自动续费</div></div><div class="price-val">¥19<span class="unit">/月</span></div></div>
+        <button class="btn-try">免费试用 3 天</button>
+        <button class="btn-buy">¥29 立即获取</button>
+        <div class="sidebar-stats">
+          <div class="sidebar-stat"><div class="sidebar-stat-num">2,341</div><div class="sidebar-stat-label">使用者</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">4.9</div><div class="sidebar-stat-label">评分</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">98%</div><div class="sidebar-stat-label">好评率</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: CREATOR -->
+<div id="page-creator" class="page">
+  <div class="creator-layout">
+    <div class="creator-hero">
+      <div class="creator-hero-av g-fitness">陈</div>
+      <div class="creator-hero-info">
+        <div class="creator-hero-name">陈教练</div>
+        <div class="creator-hero-title">NSCA-CPT 认证私人教练 · 运动营养师</div>
+        <div class="creator-hero-bio">8年健身行业经验，累计服务3000+学员。专注于忙碌打工人的饮食管理和体型改善。不卖课、不卖粉，只把我的方法变成你能直接用的方案。</div>
+        <div class="creator-hero-stats">
+          <div><div class="c-stat-num">5</div><div class="c-stat-label">方案</div></div>
+          <div><div class="c-stat-num">8.2k</div><div class="c-stat-label">使用者</div></div>
+          <div><div class="c-stat-num">4.8</div><div class="c-stat-label">评分</div></div>
+          <div><div class="c-stat-num">1.2w</div><div class="c-stat-label">关注者</div></div>
+        </div>
+      </div>
+      <div class="creator-hero-actions"><button class="btn-follow-lg">+ 关注</button></div>
+    </div>
+    <div class="creator-tabs">
+      <div class="creator-tab active">方案</div>
+      <div class="creator-tab">动态</div>
+      <div class="creator-tab">评价</div>
+    </div>
+    <div class="creator-mcp-grid">
+      <div class="c-mcp-item" onclick="showPage('detail')">
+        <img class="c-mcp-thumb" src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop" alt="">
+        <div class="c-mcp-info"><div class="c-mcp-title">外卖饮食方案</div><div class="c-mcp-desc">根据你的目标和口味，从外卖平台选最优餐食，自动下单</div><div class="c-mcp-meta"><span>🔥 2,341人使用</span><span>⭐ 4.9</span><span class="c-mcp-price">¥29</span></div></div>
+      </div>
+      <div class="c-mcp-item">
+        <img class="c-mcp-thumb" src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=200&h=200&fit=crop" alt="">
+        <div class="c-mcp-info"><div class="c-mcp-title">减脂期自炊方案</div><div class="c-mcp-desc">每周自动生成采购清单，简单食谱+备餐计划</div><div class="c-mcp-meta"><span>1,156人使用</span><span>⭐ 4.8</span><span class="c-mcp-price">¥39</span></div></div>
+      </div>
+      <div class="c-mcp-item">
+        <img class="c-mcp-thumb" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=200&h=200&fit=crop" alt="">
+        <div class="c-mcp-info"><div class="c-mcp-title">增肌训练+饮食全套方案</div><div class="c-mcp-desc">训练日/休息日不同饮食策略，配合训练计划自动调整</div><div class="c-mcp-meta"><span>876人使用</span><span>⭐ 4.7</span><span class="c-mcp-price">¥69/月</span></div></div>
+      </div>
+      <div class="c-mcp-item">
+        <img class="c-mcp-thumb" src="https://images.unsplash.com/photo-1551024506-0bccd828d307?w=200&h=200&fit=crop" alt="">
+        <div class="c-mcp-info"><div class="c-mcp-title">应酬聚餐伤害控制方案</div><div class="c-mcp-desc">提前告诉Agent今晚有应酬，自动调整当天和第二天饮食</div><div class="c-mcp-meta"><span>2,089人使用</span><span>⭐ 4.9</span><span class="c-mcp-price">¥19</span></div></div>
+      </div>
+      <div class="c-mcp-item">
+        <img class="c-mcp-thumb" src="https://images.unsplash.com/photo-1505576399279-0d754c0d8df8?w=200&h=200&fit=crop" alt="">
+        <div class="c-mcp-info"><div class="c-mcp-title">孕期营养管理方案</div><div class="c-mcp-desc">按孕周调整营养需求，追踪关键微量元素，避开禁忌食材</div><div class="c-mcp-meta"><span>634人使用</span><span>⭐ 4.8</span><span class="c-mcp-price">¥59/月</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: SEARCH -->
+<div id="page-search" class="page">
+  <div class="search-layout">
+    <div class="search-hero">
+      <div class="search-hero-title">找到适合你的生活方案</div>
+      <div class="search-hero-sub">不只是看攻略，还能让 Agent 帮你执行</div>
+      <div class="search-hero-input">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="#999" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="text" placeholder="搜索场景、创作者、关键词...">
+      </div>
+    </div>
+    <div class="search-section">
+      <div class="search-section-title">🔥 热门搜索</div>
+      <div class="hot-grid">
+        <div class="hot-item"><div class="hot-rank r1">1</div><div><div class="hot-title">健身外卖怎么吃</div><div class="hot-meta">12.3万人搜索 · 今日热门</div></div></div>
+        <div class="hot-item"><div class="hot-rank r2">2</div><div><div class="hot-title">三甲医院挂号技巧</div><div class="hot-meta">8.7万人搜索</div></div></div>
+        <div class="hot-item"><div class="hot-rank r3">3</div><div><div class="hot-title">迪士尼一日游攻略</div><div class="hot-meta">6.2万人搜索</div></div></div>
+        <div class="hot-item"><div class="hot-rank" style="color:#999">4</div><div><div class="hot-title">英语学习每天30分钟</div><div class="hot-meta">5.1万人搜索</div></div></div>
+        <div class="hot-item"><div class="hot-rank" style="color:#999">5</div><div><div class="hot-title">职场高情商回复</div><div class="hot-meta">4.8万人搜索</div></div></div>
+        <div class="hot-item"><div class="hot-rank" style="color:#999">6</div><div><div class="hot-title">香港一日游路线</div><div class="hot-meta">4.2万人搜索</div></div></div>
+      </div>
+    </div>
+    <div class="search-section">
+      <div class="search-section-title">📂 场景分类</div>
+      <div class="scene-grid">
+        <div class="scene-card" onclick="showPage('home')"><img class="scene-img" src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=300&h=200&fit=crop" alt=""><div class="scene-name">饮食健康</div><div class="scene-count">328个方案</div></div>
+        <div class="scene-card" onclick="showPage('home')"><img class="scene-img" src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=300&h=200&fit=crop" alt=""><div class="scene-name">医疗健康</div><div class="scene-count">156个方案</div></div>
+        <div class="scene-card" onclick="showPage('home')"><img class="scene-img" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300&h=200&fit=crop" alt=""><div class="scene-name">出行旅游</div><div class="scene-count">245个方案</div></div>
+        <div class="scene-card" onclick="showPage('home')"><img class="scene-img" src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=300&h=200&fit=crop" alt=""><div class="scene-name">学习教育</div><div class="scene-count">189个方案</div></div>
+        <div class="scene-card" onclick="showPage('home')"><img class="scene-img" src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=200&fit=crop" alt=""><div class="scene-name">职场效率</div><div class="scene-count">167个方案</div></div>
+        <div class="scene-card" onclick="showPage('home')"><img class="scene-img" src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=200&fit=crop" alt=""><div class="scene-name">省钱理财</div><div class="scene-count">203个方案</div></div>
+        <div class="scene-card" onclick="showPage('home')"><img class="scene-img" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=300&h=200&fit=crop" alt=""><div class="scene-name">社交沟通</div><div class="scene-count">134个方案</div></div>
+        <div class="scene-card" onclick="showPage('home')"><img class="scene-img" src="https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=300&h=200&fit=crop" alt=""><div class="scene-name">亲子育儿</div><div class="scene-count">98个方案</div></div>
+      </div>
+    </div>
+    <div class="search-section">
+      <div class="search-section-title">⭐ 热门创作者</div>
+      <div class="creator-row">
+        <div class="creator-mini" onclick="showPage('creator')"><div class="creator-mini-av g-fitness">陈</div><div class="creator-mini-name">陈教练</div><div class="creator-mini-tag">健身饮食</div></div>
+        <div class="creator-mini"><div class="creator-mini-av g-food">王</div><div class="creator-mini-name">王老饕</div><div class="creator-mini-tag">香港美食</div></div>
+        <div class="creator-mini"><div class="creator-mini-av g-health">李</div><div class="creator-mini-name">李护士</div><div class="creator-mini-tag">医院挂号</div></div>
+        <div class="creator-mini"><div class="creator-mini-av g-edu">S</div><div class="creator-mini-name">Sarah老师</div><div class="creator-mini-tag">英语学习</div></div>
+        <div class="creator-mini"><div class="creator-mini-av g-work">刘</div><div class="creator-mini-name">刘总</div><div class="creator-mini-tag">出差效率</div></div>
+        <div class="creator-mini"><div class="creator-mini-av g-social">林</div><div class="creator-mini-name">林HR</div><div class="creator-mini-tag">职场沟通</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: PUBLISH -->
+<div id="page-publish" class="page">
+  <div class="publish-layout">
+    <div class="publish-hero">
+      <div class="publish-hero-title">把你的经验变成别人能用的方案</div>
+      <div class="publish-hero-sub">每个人都有擅长的事。不管是挂号、点外卖、还是带孩子看病，<br>你的方法可能正好是别人需要的。</div>
+    </div>
+
+    <!-- Inspiration: 闲鱼风格 "你可能擅长这些" -->
+    <div class="publish-inspire">
+      <div class="inspire-card" onclick="this.classList.toggle('selected')">
+        <div class="inspire-emoji">🍱</div>
+        <div class="inspire-title">我会吃</div>
+        <div class="inspire-example">减脂餐搭配、本地美食路线、外卖避坑</div>
+      </div>
+      <div class="inspire-card" onclick="this.classList.toggle('selected')">
+        <div class="inspire-emoji">🏥</div>
+        <div class="inspire-title">我懂医院</div>
+        <div class="inspire-example">挂号技巧、体检选项、儿童看病流程</div>
+      </div>
+      <div class="inspire-card" onclick="this.classList.toggle('selected')">
+        <div class="inspire-emoji">✈️</div>
+        <div class="inspire-title">我常出门</div>
+        <div class="inspire-example">旅行路线、出差效率、签证材料</div>
+      </div>
+      <div class="inspire-card" onclick="this.classList.toggle('selected')">
+        <div class="inspire-emoji">📚</div>
+        <div class="inspire-title">我教过人</div>
+        <div class="inspire-example">英语学习、考研规划、技能培训</div>
+      </div>
+      <div class="inspire-card" onclick="this.classList.toggle('selected')">
+        <div class="inspire-emoji">💰</div>
+        <div class="inspire-title">我会省钱</div>
+        <div class="inspire-example">薅积分、比价、砍订阅、理财习惯</div>
+      </div>
+      <div class="inspire-card" onclick="this.classList.toggle('selected')">
+        <div class="inspire-emoji">💬</div>
+        <div class="inspire-title">我会说话</div>
+        <div class="inspire-example">职场沟通、客户维护、高情商回复</div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="publish-form">
+
+      <!-- Step 1: 基本信息 -->
+      <div class="form-step">
+        <div class="form-step-header">
+          <div class="step-num">1</div>
+          <div class="step-title">你想分享什么？</div>
+          <div class="step-hint">想想你朋友最常问你的事</div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">方案标题</label>
+          <input class="form-input" type="text" placeholder="例：三甲医院挂号不踩坑指南">
+        </div>
+        <div class="form-field">
+          <label class="form-label">一句话说明</label>
+          <input class="form-input" type="text" placeholder="例：在三甲医院工作5年，教你怎么挂号不扑空">
+        </div>
+        <div class="form-field">
+          <label class="form-label">详细介绍</label>
+          <textarea class="form-textarea" placeholder="你在这方面有什么经验？你的方案能帮别人解决什么问题？&#10;&#10;写得越具体，别人越容易理解你的价值。不需要很长，说清楚就好。"></textarea>
+        </div>
+        <div class="form-field">
+          <label class="form-label">封面图</label>
+          <div class="form-upload">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">点击上传一张能代表你方案的图片</div>
+            <div class="upload-hint">推荐尺寸 800x600，支持 JPG/PNG</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: 分类 -->
+      <div class="form-step">
+        <div class="form-step-header">
+          <div class="step-num">2</div>
+          <div class="step-title">属于哪个类别？</div>
+          <div class="step-hint">选一个最贴的</div>
+        </div>
+        <div class="form-tags-select">
+          <div class="form-tag-option" onclick="this.classList.toggle('selected')">🍱 饮食健康</div>
+          <div class="form-tag-option" onclick="this.classList.toggle('selected')">🏥 医疗健康</div>
+          <div class="form-tag-option" onclick="this.classList.toggle('selected')">✈️ 出行旅游</div>
+          <div class="form-tag-option" onclick="this.classList.toggle('selected')">📚 学习教育</div>
+          <div class="form-tag-option" onclick="this.classList.toggle('selected')">💼 职场效率</div>
+          <div class="form-tag-option" onclick="this.classList.toggle('selected')">💰 省钱理财</div>
+          <div class="form-tag-option" onclick="this.classList.toggle('selected')">💬 社交沟通</div>
+          <div class="form-tag-option" onclick="this.classList.toggle('selected')">👶 亲子育儿</div>
+          <div class="form-tag-option" onclick="this.classList.toggle('selected')">🏠 居家生活</div>
+          <div class="form-tag-option" onclick="this.classList.toggle('selected')">🤖 AI 工具</div>
+        </div>
+      </div>
+
+      <!-- Step 3: 能帮别人做什么 -->
+      <div class="form-step">
+        <div class="form-step-header">
+          <div class="step-num">3</div>
+          <div class="step-title">你的方案能帮别人做什么？</div>
+          <div class="step-hint">列出具体能力，越清楚越好</div>
+        </div>
+        <div class="cap-add-list">
+          <div class="cap-add-item">
+            <input class="form-input" type="text" placeholder="例：根据目标自动推荐外卖餐食">
+          </div>
+          <div class="cap-add-item">
+            <input class="form-input" type="text" placeholder="例：自动记录每天营养摄入">
+          </div>
+          <div class="cap-add-item">
+            <input class="form-input" type="text" placeholder="例：偏离目标时发提醒">
+          </div>
+          <div class="cap-add-btn" onclick="addCapItem(this)">+ 再加一条</div>
+        </div>
+      </div>
+
+      <!-- Step 4: 权限设置 -->
+      <div class="form-step">
+        <div class="form-step-header">
+          <div class="step-num">4</div>
+          <div class="step-title">你的方案需要什么权限？</div>
+          <div class="step-hint">用户会看到这些，写清楚建立信任</div>
+        </div>
+        <div class="auth-config">
+          <div class="auth-config-row">
+            <input class="form-input" type="text" placeholder="例：读取身体数据和健身目标" style="flex:1;">
+            <select class="auth-select">
+              <option value="read">只读</option>
+              <option value="confirm">需确认</option>
+              <option value="ask">每次询问</option>
+            </select>
+          </div>
+          <div class="auth-config-row">
+            <input class="form-input" type="text" placeholder="例：在外卖App中下单" style="flex:1;">
+            <select class="auth-select">
+              <option value="read">只读</option>
+              <option value="confirm" selected>需确认</option>
+              <option value="ask">每次询问</option>
+            </select>
+          </div>
+          <div class="auth-config-row">
+            <input class="form-input" type="text" placeholder="例：支付操作" style="flex:1;">
+            <select class="auth-select">
+              <option value="read">只读</option>
+              <option value="confirm">需确认</option>
+              <option value="ask" selected>每次询问</option>
+            </select>
+          </div>
+          <div class="cap-add-btn" onclick="addAuthRow(this)">+ 再加一条权限</div>
+        </div>
+      </div>
+
+      <!-- Step 5: 定价 -->
+      <div class="form-step">
+        <div class="form-step-header">
+          <div class="step-num">5</div>
+          <div class="step-title">怎么收费？</div>
+          <div class="step-hint">可以同时开多种</div>
+        </div>
+        <div class="form-price-grid">
+          <div class="form-price-card selected" onclick="this.classList.toggle('selected')">
+            <div class="form-price-type">免费试用</div>
+            <div class="form-price-desc">让用户先体验再决定</div>
+            <input class="form-price-input" placeholder="天数" value="3">
+            <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;">天</div>
+          </div>
+          <div class="form-price-card selected" onclick="this.classList.toggle('selected')">
+            <div class="form-price-type">场景包</div>
+            <div class="form-price-desc">一次购买，限时使用</div>
+            <input class="form-price-input" placeholder="¥" value="29">
+            <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;">元 / 30天</div>
+          </div>
+          <div class="form-price-card" onclick="this.classList.toggle('selected')">
+            <div class="form-price-type">月订阅</div>
+            <div class="form-price-desc">按月自动续费</div>
+            <input class="form-price-input" placeholder="¥">
+            <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;">元 / 月</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6: 你是谁 -->
+      <div class="form-step">
+        <div class="form-step-header">
+          <div class="step-num">6</div>
+          <div class="step-title">关于你</div>
+          <div class="step-hint">让别人知道为什么可以信任你</div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">一句话介绍自己</label>
+          <input class="form-input" type="text" placeholder="例：NSCA认证私教，8年经验，服务过3000+学员">
+        </div>
+        <div class="form-field">
+          <label class="form-label">为什么你擅长这件事？</label>
+          <textarea class="form-textarea" placeholder="简单说说你的背景、经验或者做过的事。&#10;不需要很正式，真实就好。"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="publish-actions">
+      <button class="btn-draft">存草稿</button>
+      <button class="btn-preview" onclick="showPage('detail')">预览效果</button>
+      <button class="btn-submit">提交发布</button>
+    </div>
+
+    <!-- Tips -->
+    <div class="publish-tips">
+      <div class="tips-title">💡 发布小贴士</div>
+      <div class="tips-list">
+        · 标题写得像朋友推荐，别写得像广告（"帮你挂号不扑空" 比 "专业医疗咨询服务" 好）<br>
+        · 封面图选一张真实的、有场景感的图片，比纯文字更吸引人<br>
+        · 能力描述越具体越好，用户想知道"你到底能帮我做什么"<br>
+        · 先开免费试用，让用户体验后再付费，转化率更高<br>
+        · 权限写清楚能建立信任，不要申请用不到的权限
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  if (id === 'home') document.querySelectorAll('.nav-tab')[0].classList.add('active');
+  if (id === 'search') document.querySelectorAll('.nav-tab')[1].classList.add('active');
+  window.scrollTo(0, 0);
+}
+function selectPrice(el) {
+  document.querySelectorAll('.price-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function addCapItem(btn) {
+  const item = document.createElement('div');
+  item.className = 'cap-add-item';
+  item.innerHTML = '<input class="form-input" type="text" placeholder="再加一条能力...">';
+  btn.parentElement.insertBefore(item, btn);
+}
+function addAuthRow(btn) {
+  const row = document.createElement('div');
+  row.className = 'auth-config-row';
+  row.innerHTML = '<input class="form-input" type="text" placeholder="描述需要的权限" style="flex:1;"><select class="auth-select"><option value="read">只读</option><option value="confirm">需确认</option><option value="ask">每次询问</option></select>';
+  btn.parentElement.insertBefore(row, btn);
+}
+</script>
+</body>
+</html>
