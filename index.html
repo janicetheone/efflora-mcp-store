@@ -767,7 +767,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
       </div>
 
       <!-- 2: 香港美食 - IMAGE -->
-      <div class="mcp-card">
+      <div class="mcp-card" onclick="showPage('detail-hk')">
         <div class="card-cover">
           <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&h=500&fit=crop" alt="港式点心">
           <span class="cover-badge badge-top">⭐ 4.9分</span>
@@ -787,7 +787,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
       </div>
 
       <!-- 3: 挂号 - IMAGE -->
-      <div class="mcp-card">
+      <div class="mcp-card" onclick="showPage('detail-hospital')">
         <div class="card-cover">
           <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&h=700&fit=crop" alt="医院">
           <span class="cover-price">¥39</span>
@@ -826,16 +826,16 @@ button { cursor: pointer; border: none; font-family: inherit; }
       </div>
 
       <!-- 5: AI资讯 - TEXT (少数) -->
-      <div class="mcp-card">
+      <div class="mcp-card" onclick="showPage('detail-ainews')">
         <div class="card-cover-text-only" style="background:#1A1A2E; background-image: radial-gradient(circle at 20% 50%, rgba(124,77,255,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0,200,83,0.1) 0%, transparent 50%);">
           <span class="cover-badge badge-new">NEW</span>
           <span class="cover-price" style="background:rgba(255,255,255,0.15);color:white;">¥49/月</span>
-          <div class="cover-text-main" style="color:white;">每天5分钟<br>看完AI圈所有大事</div>
-          <div class="cover-text-sub" style="color:rgba(255,255,255,0.6);">自动抓取全平台，帮你过滤噪音</div>
+          <div class="cover-text-main" style="color:white;">AI行业周报<br>老板看得懂的那种</div>
+          <div class="cover-text-sub" style="color:rgba(255,255,255,0.6);">自动读飞书+全网，生成可汇报的简报</div>
         </div>
         <div class="card-body">
-          <div class="card-title">AI 资讯降噪编辑</div>
-          <div class="card-tags"><span class="tag tag-cat">AI</span><span class="tag tag-auto">自动推送</span></div>
+          <div class="card-title">AI 行业动态汇报助手</div>
+          <div class="card-tags"><span class="tag tag-cat">职场</span><span class="tag tag-auto">读飞书</span></div>
           <div class="card-footer">
             <div class="card-author"><div class="card-avatar g-ai">K</div><span class="card-author-name">Kevin编辑</span></div>
             <div class="card-stats">❤️ 986</div>
@@ -863,7 +863,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
       </div>
 
       <!-- 7: 迪士尼 - IMAGE -->
-      <div class="mcp-card">
+      <div class="mcp-card" onclick="showPage('detail-disney')">
         <div class="card-cover">
           <img src="https://images.unsplash.com/photo-1597466599360-3b9775841aec?w=500&h=700&fit=crop" alt="迪士尼">
           <span class="cover-price">¥29</span>
@@ -882,7 +882,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
       </div>
 
       <!-- 8: 薅羊毛 - TEXT (少数) -->
-      <div class="mcp-card">
+      <div class="mcp-card" onclick="showPage('detail-miles')">
         <div class="card-cover-text-only" style="background:#FFFDE7; background-image: radial-gradient(circle at 50% 50%, rgba(255,193,7,0.1) 0%, transparent 60%);">
           <span class="cover-price">¥19</span>
           <div class="cover-text-main"><span class="hl">航空里程</span> +<br><span style="color:#7C4DFF;">酒店积分</span><br>怎么薅最划算</div>
@@ -1012,6 +1012,393 @@ button { cursor: pointer; border: none; font-family: inherit; }
           <div class="sidebar-stat"><div class="sidebar-stat-num">2,341</div><div class="sidebar-stat-label">使用者</div></div>
           <div class="sidebar-stat"><div class="sidebar-stat-num">4.9</div><div class="sidebar-stat-label">评分</div></div>
           <div class="sidebar-stat"><div class="sidebar-stat-num">98%</div><div class="sidebar-stat-label">好评率</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DETAIL-HOSPITAL (挂号) -->
+<div id="page-detail-hospital" class="page">
+  <div class="detail-layout">
+    <div class="detail-main">
+      <div class="detail-hero">
+        <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200&h=500&fit=crop" alt="医院挂号">
+        <span class="detail-hero-badge">🏥 1,823人使用</span>
+        <div class="detail-hero-overlay">
+          <h1>三甲医院挂号不踩坑指南</h1>
+          <p>号源规律、科室选择、复诊技巧，Agent 帮你自动抢号和提醒</p>
+        </div>
+      </div>
+      <div class="detail-desc">
+        在三甲医院工作5年，见过太多人挂错科、抢不到号、复诊忘记。这个方案把我的经验变成规则：根据你的症状推荐科室，分析号源放号规律帮你卡点预约，复诊时间到了自动提醒你挂号。
+      </div>
+      <div class="detail-creator">
+        <div class="creator-av g-health">李</div>
+        <div class="creator-info">
+          <div class="creator-name">李护士</div>
+          <div class="creator-desc">三甲医院在职护士 · 5年导诊经验 · 帮过2000+患者</div>
+        </div>
+        <button class="creator-follow">+ 关注</button>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">✨ 这个方案能帮你做什么</div>
+        <div class="cap-grid">
+          <div class="cap-item"><div class="cap-icon">🔍</div><div class="cap-name">症状分诊</div><div class="cap-desc">描述症状后推荐最合适的科室和医生，避免挂错号白跑一趟</div></div>
+          <div class="cap-item"><div class="cap-icon">⏰</div><div class="cap-name">号源监控</div><div class="cap-desc">分析目标医生的放号规律，到点自动帮你抢号，抢到立刻通知</div></div>
+          <div class="cap-item"><div class="cap-icon">📋</div><div class="cap-name">就诊准备</div><div class="cap-desc">根据科室自动整理需要带的检查报告、病历、证件清单</div></div>
+          <div class="cap-item"><div class="cap-icon">🔄</div><div class="cap-name">复诊提醒</div><div class="cap-desc">医生说"两周后复查"，自动帮你设提醒并预约号源</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">🔐 需要的权限</div>
+        <div class="auth-list">
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">读取你的症状描述和病历信息</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">浏览挂号平台号源信息</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot orange"></div><div class="auth-text">在挂号平台预约挂号</div><div class="auth-badge confirm">需确认</div></div>
+          <div class="auth-row"><div class="auth-dot red"></div><div class="auth-text">支付挂号费</div><div class="auth-badge ask">每次询问</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">💬 用户评价</div>
+        <div class="review-list">
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#f093fb,#f5576c)">陈</div><div class="review-name">陈女士</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">孩子发烧不知道挂儿内科还是急诊，这个直接告诉我该挂什么，还帮我抢到了第二天早上的号。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">老</div><div class="review-name">老王</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">以前总是复诊忘记挂号，等想起来号早没了。现在自动帮我提前一周预约，省心太多。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#43e97b,#38f9d7)">小</div><div class="review-name">小林</div><div class="review-stars">⭐⭐⭐⭐</div></div>
+            <div class="review-text">放号规律真的准，连着三次都抢到了协和的专家号。就是偶尔会推荐得不太对，需要自己判断一下。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">选择方案</div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">免费试用</div><div class="price-desc">体验3天，基础分诊功能</div></div><div class="price-val">¥0</div></div>
+        <div class="price-option selected" onclick="selectPrice(this)"><div><div class="price-name">场景包 <span class="pop-tag">热门</span></div><div class="price-desc">30天号源监控 + 自动预约</div></div><div class="price-val">¥39</div></div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">持续订阅</div><div class="price-desc">长期使用，含复诊管理</div></div><div class="price-val">¥29<span class="unit">/月</span></div></div>
+        <button class="btn-try">免费试用 3 天</button>
+        <button class="btn-buy">¥39 立即获取</button>
+        <div class="sidebar-stats">
+          <div class="sidebar-stat"><div class="sidebar-stat-num">1,823</div><div class="sidebar-stat-label">使用者</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">4.8</div><div class="sidebar-stat-label">评分</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">96%</div><div class="sidebar-stat-label">好评率</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DETAIL-HK (香港一日游) -->
+<div id="page-detail-hk" class="page">
+  <div class="detail-layout">
+    <div class="detail-main">
+      <div class="detail-hero">
+        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=1200&h=500&fit=crop" alt="香港美食">
+        <span class="detail-hero-badge">⭐ 3,156人使用</span>
+        <div class="detail-hero-overlay">
+          <h1>香港老饕一日美食路线</h1>
+          <p>从早茶到宵夜，8家店不踩雷，Agent 帮你导航排队和点单</p>
+        </div>
+      </div>
+      <div class="detail-desc">
+        在香港住了15年，每周至少外食5天。这条路线是我带了上百个朋友验证过的：从中环早茶开始，到深水埗午餐，再到旺角下午茶，最后铜锣湾宵夜。Agent 帮你实时看排队情况、导航最快路线、甚至提前帮你点好招牌菜。
+      </div>
+      <div class="detail-creator">
+        <div class="creator-av g-food">王</div>
+        <div class="creator-info">
+          <div class="creator-name">王老饕</div>
+          <div class="creator-desc">香港15年 · 食评博主 · 带过100+人一日游</div>
+        </div>
+        <button class="creator-follow">+ 关注</button>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">✨ 这个方案能帮你做什么</div>
+        <div class="cap-grid">
+          <div class="cap-item"><div class="cap-icon">🗺️</div><div class="cap-name">智能路线</div><div class="cap-desc">根据你的出发地和时间，自动规划最省时的8店路线，实时调整</div></div>
+          <div class="cap-item"><div class="cap-icon">⏱️</div><div class="cap-name">排队预判</div><div class="cap-desc">接入实时数据，告诉你现在去哪家不用排队，帮你卡时间差</div></div>
+          <div class="cap-item"><div class="cap-icon">📝</div><div class="cap-name">点单推荐</div><div class="cap-desc">每家店的必点菜、隐藏菜单、避雷项，到店前就帮你列好</div></div>
+          <div class="cap-item"><div class="cap-icon">💴</div><div class="cap-name">预算控制</div><div class="cap-desc">设定总预算后自动分配每餐花费，丰俭由人不超支</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">🔐 需要的权限</div>
+        <div class="auth-list">
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">读取你的位置信息（用于导航）</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">读取你的饮食偏好和忌口</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot orange"></div><div class="auth-text">在地图App中设置导航</div><div class="auth-badge confirm">需确认</div></div>
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">查看餐厅排队和营业信息</div><div class="auth-badge read">只读</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">💬 用户评价</div>
+        <div class="review-list">
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#fbc2eb,#a6c1ee)">M</div><div class="review-name">Mia</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">第一次去香港，跟着这个路线走了一天，每家店都好吃到哭。特别是那个隐藏的车仔面，不看推荐根本找不到。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#ff9a9e,#fecfef)">吃</div><div class="review-name">吃货小胖</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">排队预判太准了，到莲香楼的时候前面只有3桌，隔壁路线的朋友等了40分钟。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)">阿</div><div class="review-name">阿杰</div><div class="review-stars">⭐⭐⭐⭐</div></div>
+            <div class="review-text">8家店吃下来人均不到400港币，质量很高。唯一建议是宵夜那家可以多给几个选项。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">选择方案</div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">免费试用</div><div class="price-desc">体验基础路线推荐</div></div><div class="price-val">¥0</div></div>
+        <div class="price-option selected" onclick="selectPrice(this)"><div><div class="price-name">场景包 <span class="pop-tag">热门</span></div><div class="price-desc">完整8店路线 + 实时导航</div></div><div class="price-val">¥19</div></div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">季节更新</div><div class="price-desc">每月更新新店，持续使用</div></div><div class="price-val">¥9<span class="unit">/月</span></div></div>
+        <button class="btn-try">免费试用</button>
+        <button class="btn-buy">¥19 立即获取</button>
+        <div class="sidebar-stats">
+          <div class="sidebar-stat"><div class="sidebar-stat-num">3,156</div><div class="sidebar-stat-label">使用者</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">4.9</div><div class="sidebar-stat-label">评分</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">99%</div><div class="sidebar-stat-label">好评率</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DETAIL-DISNEY (迪士尼一日游) -->
+<div id="page-detail-disney" class="page">
+  <div class="detail-layout">
+    <div class="detail-main">
+      <div class="detail-hero">
+        <img src="https://images.unsplash.com/photo-1597466599360-3b9775841aec?w=1200&h=500&fit=crop" alt="迪士尼">
+        <span class="detail-hero-badge">🎢 2,108人使用</span>
+        <div class="detail-hero-overlay">
+          <h1>迪士尼高玩一日刷园攻略</h1>
+          <p>几点冲什么项目、吃饭怎么卡点、花车巡游最佳位置，Agent 实时帮你调度</p>
+        </div>
+      </div>
+      <div class="detail-desc">
+        年卡玩家，一年去了47次迪士尼。这套方案不是"建议你早点去"这种废话攻略，而是精确到分钟的刷园路线：开园冲哪个项目、什么时候去吃饭排队最短、花车几点到哪个位置拍照最好。Agent 会根据当天实时排队情况帮你动态调整路线。
+      </div>
+      <div class="detail-creator">
+        <div class="creator-av g-travel">赵</div>
+        <div class="creator-info">
+          <div class="creator-name">赵高玩</div>
+          <div class="creator-desc">迪士尼年卡玩家 · 一年47次 · 全项目无限次通关</div>
+        </div>
+        <button class="creator-follow">+ 关注</button>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">✨ 这个方案能帮你做什么</div>
+        <div class="cap-grid">
+          <div class="cap-item"><div class="cap-icon">🎯</div><div class="cap-name">开园冲刺路线</div><div class="cap-desc">根据入园时间和必玩项目，生成最优冲刺顺序，比别人多玩2-3个项目</div></div>
+          <div class="cap-item"><div class="cap-icon">📊</div><div class="cap-name">实时排队监控</div><div class="cap-desc">接入园区数据，实时告诉你每个项目排队时间，动态调整路线</div></div>
+          <div class="cap-item"><div class="cap-icon">🍽️</div><div class="cap-name">用餐卡点</div><div class="cap-desc">避开用餐高峰，推荐错峰时段和性价比最高的餐厅</div></div>
+          <div class="cap-item"><div class="cap-icon">📸</div><div class="cap-name">拍照点位</div><div class="cap-desc">花车巡游、烟花秀最佳观赏位置和提前占位时间</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">🔐 需要的权限</div>
+        <div class="auth-list">
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">读取你的位置信息（园区内导航）</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">读取迪士尼App排队和演出时间</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot orange"></div><div class="auth-text">在迪士尼App中领取预约等候卡</div><div class="auth-badge confirm">需确认</div></div>
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">发送路线调整通知</div><div class="auth-badge read">只读</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">💬 用户评价</div>
+        <div class="review-list">
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#f6d365,#fda085)">糖</div><div class="review-name">糖糖妈</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">带娃去的，平时最多玩5个项目，这次跟着路线玩了9个！中午吃饭居然没排队，太神了。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#89f7fe,#66a6ff)">D</div><div class="review-name">DisneyFan</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">烟花秀的位置推荐绝了，正好在城堡正前方，拍出来的照片像官方海报。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#c471f5,#fa71cd)">情</div><div class="review-name">情侣出游</div><div class="review-stars">⭐⭐⭐⭐</div></div>
+            <div class="review-text">实时调整路线这个功能很厉害，创极速光轮突然排队变短的时候立刻通知我们去。省了至少一个小时。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">选择方案</div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">免费试用</div><div class="price-desc">基础路线推荐（无实时调整）</div></div><div class="price-val">¥0</div></div>
+        <div class="price-option selected" onclick="selectPrice(this)"><div><div class="price-name">单次使用 <span class="pop-tag">热门</span></div><div class="price-desc">完整路线 + 实时动态调整</div></div><div class="price-val">¥29</div></div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">年卡玩家</div><div class="price-desc">无限次使用，每月更新攻略</div></div><div class="price-val">¥15<span class="unit">/月</span></div></div>
+        <button class="btn-try">免费试用</button>
+        <button class="btn-buy">¥29 立即获取</button>
+        <div class="sidebar-stats">
+          <div class="sidebar-stat"><div class="sidebar-stat-num">2,108</div><div class="sidebar-stat-label">使用者</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">4.9</div><div class="sidebar-stat-label">评分</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">97%</div><div class="sidebar-stat-label">好评率</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DETAIL-AINEWS (AI行业动态汇报助手) -->
+<div id="page-detail-ainews" class="page">
+  <div class="detail-layout">
+    <div class="detail-main">
+      <div class="detail-hero" style="background:#1A1A2E;">
+        <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=1200&h=500&fit=crop" alt="AI资讯" style="opacity:0.5;">
+        <span class="detail-hero-badge">💼 986人使用</span>
+        <div class="detail-hero-overlay">
+          <h1>AI 行业动态汇报助手</h1>
+          <p>自动读飞书文档 + 全网AI资讯，生成老板看得懂的周报和汇报材料</p>
+        </div>
+      </div>
+      <div class="detail-desc">
+        你老板让你"关注一下AI行业动态"，但你每天光干活就忙不过来。这个方案帮你自动从飞书文档读取团队相关信息，结合全网AI资讯（论文、产品、融资、政策），生成一份结构清晰、老板看得懂的汇报材料。周一早上自动推送到你飞书，你检查一下就能直接发。
+      </div>
+      <div class="detail-creator">
+        <div class="creator-av g-ai">K</div>
+        <div class="creator-info">
+          <div class="creator-name">Kevin</div>
+          <div class="creator-desc">前大厂AI产品经理 · 3年行业研究经验 · 给CEO写过200+份周报</div>
+        </div>
+        <button class="creator-follow">+ 关注</button>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">✨ 这个方案能帮你做什么</div>
+        <div class="cap-grid">
+          <div class="cap-item"><div class="cap-icon">📖</div><div class="cap-name">读飞书文档</div><div class="cap-desc">自动读取你飞书里的项目文档、会议纪要，提取和AI相关的上下文</div></div>
+          <div class="cap-item"><div class="cap-icon">🌐</div><div class="cap-name">全网资讯抓取</div><div class="cap-desc">Twitter、Hacker News、ArXiv、36kr、公众号，自动过滤噪音只留重点</div></div>
+          <div class="cap-item"><div class="cap-icon">📊</div><div class="cap-name">生成汇报材料</div><div class="cap-desc">按"行业动态 / 竞品分析 / 对我们的影响"结构输出，老板直接能看</div></div>
+          <div class="cap-item"><div class="cap-icon">📅</div><div class="cap-name">定时推送</div><div class="cap-desc">每周一早上自动推送到飞书，日报/周报/月报频率可选</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">🔐 需要的权限</div>
+        <div class="auth-list">
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">读取飞书文档和知识库（获取团队上下文）</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">读取飞书日历和会议纪要</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">抓取公开AI资讯源</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot orange"></div><div class="auth-text">在飞书中发送汇报消息</div><div class="auth-badge confirm">需确认</div></div>
+          <div class="auth-row"><div class="auth-dot orange"></div><div class="auth-text">创建和编辑飞书文档（生成周报）</div><div class="auth-badge confirm">需确认</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">💬 用户评价</div>
+        <div class="review-list">
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#667eea,#764ba2)">张</div><div class="review-name">张PM</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">老板让我每周汇报AI动态，以前要花半天搜集整理。现在周一早上打开飞书就有现成的，改改措辞就能发。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#f093fb,#f5576c)">刘</div><div class="review-name">刘总监</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">最牛的是它能读我们飞书里的项目文档，然后把外面的资讯和我们的业务关联起来分析。不是简单的新闻搬运。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#11998e,#38ef7d)">A</div><div class="review-name">Alex</div><div class="review-stars">⭐⭐⭐⭐</div></div>
+            <div class="review-text">汇报格式很专业，"对我们的影响"这个板块特别好，老板看了之后主动问我更多细节。升职加薪靠它了。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">选择方案</div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">免费试用</div><div class="price-desc">体验1次周报生成</div></div><div class="price-val">¥0</div></div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">月度版</div><div class="price-desc">每周一份周报 + 飞书推送</div></div><div class="price-val">¥49<span class="unit">/月</span></div></div>
+        <div class="price-option selected" onclick="selectPrice(this)"><div><div class="price-name">专业版 <span class="pop-tag">热门</span></div><div class="price-desc">日报+周报+月报 + 竞品追踪</div></div><div class="price-val">¥99<span class="unit">/月</span></div></div>
+        <button class="btn-try">免费试用 1 次</button>
+        <button class="btn-buy">¥49/月 立即订阅</button>
+        <div class="sidebar-stats">
+          <div class="sidebar-stat"><div class="sidebar-stat-num">986</div><div class="sidebar-stat-label">使用者</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">4.7</div><div class="sidebar-stat-label">评分</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">94%</div><div class="sidebar-stat-label">好评率</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DETAIL-MILES (航空里程) -->
+<div id="page-detail-miles" class="page">
+  <div class="detail-layout">
+    <div class="detail-main">
+      <div class="detail-hero">
+        <img src="https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=1200&h=500&fit=crop" alt="航空里程">
+        <span class="detail-hero-badge">✈️ 1,532人使用</span>
+        <div class="detail-hero-overlay">
+          <h1>薅航空里程和酒店积分达人方法</h1>
+          <p>自动比价、最优兑换路径、过期提醒，Agent 帮你把积分价值最大化</p>
+        </div>
+      </div>
+      <div class="detail-desc">
+        飞了200万英里，住了300晚酒店。里程和积分这东西，大部分人要么不知道怎么攒，要么攒了不知道怎么用最划算。这个方案自动追踪你所有航司和酒店的积分，帮你找到最优兑换路径。比如同样飞东京，有时候用国航里程比全日空便宜40%，但你不比就不知道。
+      </div>
+      <div class="detail-creator">
+        <div class="creator-av g-money">张</div>
+        <div class="creator-info">
+          <div class="creator-name">飞行张</div>
+          <div class="creator-desc">200万英里飞行经验 · 航空里程研究6年 · 帮人省了50万+机票钱</div>
+        </div>
+        <button class="creator-follow">+ 关注</button>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">✨ 这个方案能帮你做什么</div>
+        <div class="cap-grid">
+          <div class="cap-item"><div class="cap-icon">📊</div><div class="cap-name">积分全景</div><div class="cap-desc">自动汇总你所有航司、酒店、信用卡的积分余额和过期时间</div></div>
+          <div class="cap-item"><div class="cap-icon">🔄</div><div class="cap-name">最优兑换</div><div class="cap-desc">输入目的地，自动比较所有积分兑换路径，找出最划算的方案</div></div>
+          <div class="cap-item"><div class="cap-icon">⏰</div><div class="cap-name">过期提醒</div><div class="cap-desc">积分快过期时提前通知，并推荐最佳消耗方式，不浪费一分</div></div>
+          <div class="cap-item"><div class="cap-icon">💳</div><div class="cap-name">信用卡优化</div><div class="cap-desc">根据你的消费习惯推荐最能攒里程的信用卡和支付方式</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">🔐 需要的权限</div>
+        <div class="auth-list">
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">读取航司和酒店会员积分余额</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">读取信用卡积分信息</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot green"></div><div class="auth-text">查询航班和酒店兑换价格</div><div class="auth-badge read">只读</div></div>
+          <div class="auth-row"><div class="auth-dot orange"></div><div class="auth-text">提交里程兑换订单</div><div class="auth-badge confirm">需确认</div></div>
+          <div class="auth-row"><div class="auth-dot red"></div><div class="auth-text">积分转让操作</div><div class="auth-badge ask">每次询问</div></div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="section-title">💬 用户评价</div>
+        <div class="review-list">
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#f6d365,#fda085)">空</div><div class="review-name">空中飞人</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">去年用这个省了2万多机票钱。同样飞伦敦，它帮我找到用阿拉斯加里程换国泰商务舱的路径，比直接买便宜60%。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#a8edea,#fed6e3)">小</div><div class="review-name">小白兔</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+            <div class="review-text">之前完全不懂积分，3万国航里程差点过期。这个提醒我之后，帮我换了一张北京到成都的免费机票。</div>
+          </div>
+          <div class="review-item">
+            <div class="review-head"><div class="review-av" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">商</div><div class="review-name">商旅达人</div><div class="review-stars">⭐⭐⭐⭐</div></div>
+            <div class="review-text">信用卡推荐很实用，换了一张之后每月多攒30%的里程。就是酒店积分这块数据更新有时候慢一拍。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">选择方案</div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">免费试用</div><div class="price-desc">查看积分全景和基础比价</div></div><div class="price-val">¥0</div></div>
+        <div class="price-option selected" onclick="selectPrice(this)"><div><div class="price-name">场景包 <span class="pop-tag">热门</span></div><div class="price-desc">30天无限比价 + 过期提醒</div></div><div class="price-val">¥19</div></div>
+        <div class="price-option" onclick="selectPrice(this)"><div><div class="price-name">持续订阅</div><div class="price-desc">长期追踪 + 信用卡优化建议</div></div><div class="price-val">¥15<span class="unit">/月</span></div></div>
+        <button class="btn-try">免费试用</button>
+        <button class="btn-buy">¥19 立即获取</button>
+        <div class="sidebar-stats">
+          <div class="sidebar-stat"><div class="sidebar-stat-num">1,532</div><div class="sidebar-stat-label">使用者</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">4.8</div><div class="sidebar-stat-label">评分</div></div>
+          <div class="sidebar-stat"><div class="sidebar-stat-num">96%</div><div class="sidebar-stat-label">好评率</div></div>
         </div>
       </div>
     </div>
